@@ -5,4 +5,4 @@
  * @author richard
  *
  */
-package com.galaxyForcaster;
+package dev.galaxyForcaster.DAO;
