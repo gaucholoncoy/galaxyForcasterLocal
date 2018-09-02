@@ -23,8 +23,11 @@ public class Vector {
 	public Vector(PosicionOrbital pA, PosicionOrbital pB) {
 		// TODO Auto-generated constructor stub
 
-		this.coordenadaX = pB.getX() - pA.getX();
-		this.coordenadaY = pB.getY() - pA.getY();
+		//(double)Math.round((pB.getX() - pA.getX())) * 1000d) / 1000d;
+		this.coordenadaX = (double) Math.round((pB.getX() - pA.getX()) * 1000d) / 1000d;
+		
+//		this.coordenadaY = pB.getY() - pA.getY();
+		this.coordenadaY = (double) Math.round((pB.getY() - pA.getY()) * 1000d) / 1000d;
 		this.planetaA = pA.getNombrePlaneta();
 		this.planetaB = pB.getNombrePlaneta();
 
@@ -32,8 +35,10 @@ public class Vector {
 
 	public Vector(PosicionOrbital pA, double px2, double py2, String planeta) {
 		// TODO Auto-generated constructor stub
-		this.coordenadaX = px2 - pA.getX();
-		this.coordenadaY = py2 - pA.getY();
+//		this.coordenadaX = px2 - pA.getX();
+		this.coordenadaX = (double) Math.round((px2 - pA.getX()) * 1000d) / 1000d;		
+//		this.coordenadaY = py2 - pA.getY();
+		this.coordenadaY = (double) Math.round((py2 - pA.getY()) * 1000d) / 1000d;		
 		this.planetaA = pA.getNombrePlaneta();
 		this.planetaB = planeta;
 	}
@@ -50,12 +55,17 @@ public class Vector {
 		if (v.coordenadaX == 0  ||v.coordenadaY == 0 )
 			return false;
 		
-		System.out.println(" divisionX =" + (this.coordenadaX / v.coordenadaX));
-		System.out.println(" divisionY =" + (this.coordenadaY / v.coordenadaY));
-		System.out
-				.println(" comparacion =" + ((this.coordenadaX / v.coordenadaX) == (this.coordenadaY / v.coordenadaY)));
+	
+		
+		double componenteX= Math.abs((double) Math.round((this.coordenadaX / v.coordenadaX) * 1000d) / 1000d);	
+		double componenteY= Math.abs((double) Math.round((this.coordenadaY / v.coordenadaY) * 1000d) / 1000d);	
 
-		return ((this.coordenadaX / v.coordenadaX) == (this.coordenadaY / v.coordenadaY));
+
+		System.out
+				.println(" divisionY =" + (componenteY) + " divisionX =" + (componenteX) +" comparacion =" + ((componenteX) == (componenteY)));		
+				
+		return (componenteX == componenteY);
+//		return ((this.coordenadaX / v.coordenadaX) == (this.coordenadaY / v.coordenadaY));
 
 	}
 
