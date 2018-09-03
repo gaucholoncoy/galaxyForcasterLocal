@@ -3,9 +3,10 @@
  */
 package dev.galaxyForcaster.entities;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import dev.galaxyForcaster.service.Vector;
+import dev.galaxyForcaster.service.Constantes;
 
 /**
  * @author richard
@@ -17,90 +18,65 @@ public class Pronostico {
 	 * 
 	 */
 
-	public static final String AL_TOTAL = "ALINEACION_TOTAL";
-	public static final String AL_PAR = "ALINEACION_PARCIAL";
-	public static final String NO_AL = "NO_ALINEACION";
+	private long identificadorPeriodo;
 
-	private long IdentificadorPeriodo;
+	private double perimetroArea = 0;
 
-	private String CondicionClimatica;
+	private String condicionClimatica = Constantes.NORMAL;
 
-	private ArrayList<PosicionOrbital> PosicionOrbitales;
+	private ArrayList<PosicionOrbital> posicionOrbitales;
 
 	public Pronostico(int Id, ArrayList<PosicionOrbital> po) {
 		// TODO Auto-generated constructor stub
-		this.IdentificadorPeriodo = Id;
-		this.PosicionOrbitales = po;
+		this.identificadorPeriodo = Id;
+		this.posicionOrbitales = po;
 	}
 
-	void analizarCondiciones() {
+	public void analizarCondiciones() {
 
-	}
+		Point2D puntoA = posicionOrbitales.get(0).getCoordenadas();
+		Point2D puntoB = posicionOrbitales.get(1).getCoordenadas();
+		Point2D puntoC = posicionOrbitales.get(2).getCoordenadas();
+		Point2D pSol = new Point2D.Double(0, 0);
 
-	public String existeAlineacion() {
+		Vector vectorAB = new Vector(puntoA, puntoB, posicionOrbitales.get(0).getNombrePlaneta(),
+				posicionOrbitales.get(1).getNombrePlaneta());
+		System.out.println(vectorAB);
 
-		boolean alineacion_parcial = true;
-		boolean alineacion_total = false;
+		Vector vectorBC = new Vector(puntoB, puntoC, posicionOrbitales.get(1).getNombrePlaneta(),
+				posicionOrbitales.get(2).getNombrePlaneta());
+		System.out.println(vectorBC);
 
-		String resultado = NO_AL;
+		Vector vectorSol = new Vector(puntoB, pSol, posicionOrbitales.get(1).getNombrePlaneta(), "SOL");
 
-		PosicionOrbital pA = null;
-		PosicionOrbital pB = null;
-		PosicionOrbital pC = null;
+		System.out.println(vectorSol);
 
-		Vector vectorAB = null;
-		Vector vectorBC = null;
+		if (vectorAB.isCombinacionLinearDe(vectorBC)) {
 
-		int p = 0;
+			System.out.println("hay combinacion lineal 0");
 
-		try {
-			while (alineacion_parcial && ((p + 2)  < PosicionOrbitales.size())) {
+//			vectorAB = new Vector(puntoB, puntoC, posicionOrbitales.get(1).getNombrePlaneta(),posicionOrbitales.get(2).getNombrePlaneta());
 
-				pA = PosicionOrbitales.get(p);
-				pB = PosicionOrbitales.get(p + 1);
-				pC = PosicionOrbitales.get(p + 2);
+			// vector con punto en el sol x=0,y=0
 
-				vectorAB = new Vector(PosicionOrbitales.get(p), PosicionOrbitales.get(p + 1));
-				System.out.println(vectorAB);
-				vectorBC = new Vector(PosicionOrbitales.get(p + 1), PosicionOrbitales.get(p + 2));
-				System.out.println(vectorBC);				
-				
-				//  verficacion si tienen la misma proporcion ==> son vectore que tienen combinacion linear entre ellos
-				alineacion_parcial = alineacion_parcial && (vectorAB.isCombinacionLinearDe(vectorBC));
-				p++;
+//			vectorBC = new Vector(puntoB, puntoC, posicionOrbitales.get(1).getNombrePlaneta(), "SOL");
 
+			if (vectorBC.isCombinacionLinearDe(vectorSol)) {
+				condicionClimatica = Constantes.SEQUIA;
+				System.out.println("hay combinacion lineal 1");
+			} else {
+				condicionClimatica = Constantes.OPTIMO;
+				System.out.println("hay combinacion lineal 2");
 			}
 
-			if (alineacion_parcial) {
+			this.perimetroArea = 0;
 
-				// como tengo alineacion entre planetas, verifico si algun vector entre el sol y
-				// algun planeta tiene la misma proporcionalidad.
-
-				resultado = AL_PAR;
-
-				vectorAB = new Vector(PosicionOrbitales.get(1), PosicionOrbitales.get(2));
-
-				// vector con punto en el sol x=0,y=0
-
-				vectorBC = new Vector(PosicionOrbitales.get(1), 0, 0,"SOL");
-
-				System.out.println();
-			//  verficacion si tienen la misma proporcion ==> son vectore que tienen combinacion linear entre ellos
-				alineacion_total = alineacion_parcial && (vectorAB.isCombinacionLinearDe(vectorAB) );
-				System.out.println(vectorAB);
-				System.out.println(vectorBC);
-				
-
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("perror " + PosicionOrbitales.size());
-			e.printStackTrace();
+		} else {
+			Triangulo triangulo = new Triangulo(puntoA, puntoB, puntoC, pSol);
+			if (triangulo.isPuntoInTriangulo())
+				condicionClimatica = Constantes.LLUVIA;
+			this.perimetroArea = triangulo.getPerimetro();
 		}
-
-		if (alineacion_total)
-			resultado = AL_TOTAL;
-		return resultado;
 
 	}
 
@@ -111,8 +87,50 @@ public class Pronostico {
 	 */
 	@Override
 	public String toString() {
-		return "Pronostico [IdentificadorPeriodo=" + IdentificadorPeriodo + ", CondicionClimatica=" + CondicionClimatica
-				+ ", PosicionOrbitales=" + PosicionOrbitales + "]";
+		return "\nPronostico [identificadorPeriodo=" + identificadorPeriodo + ", perimetroArea=" + perimetroArea
+				+ ", condicionClimatica=" + condicionClimatica + "]";
+	}
+
+	/**
+	 * @return the identificadorPeriodo
+	 */
+	public long getIdentificadorPeriodo() {
+		return identificadorPeriodo;
+	}
+
+	/**
+	 * @param identificadorPeriodo the identificadorPeriodo to set
+	 */
+	public void setIdentificadorPeriodo(long identificadorPeriodo) {
+		this.identificadorPeriodo = identificadorPeriodo;
+	}
+
+	/**
+	 * @return the perimetroArea
+	 */
+	public double getPerimetroArea() {
+		return perimetroArea;
+	}
+
+	/**
+	 * @param perimetroArea the perimetroArea to set
+	 */
+	public void setPerimetroArea(long perimetroArea) {
+		this.perimetroArea = perimetroArea;
+	}
+
+	/**
+	 * @return the condicionClimatica
+	 */
+	public String getCondicionClimatica() {
+		return condicionClimatica;
+	}
+
+	/**
+	 * @param condicionClimatica the condicionClimatica to set
+	 */
+	public void setCondicionClimatica(String condicionClimatica) {
+		this.condicionClimatica = condicionClimatica;
 	}
 
 }

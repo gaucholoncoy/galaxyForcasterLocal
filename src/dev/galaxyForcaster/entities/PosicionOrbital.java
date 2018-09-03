@@ -3,6 +3,8 @@
  */
 package dev.galaxyForcaster.entities;
 
+import java.awt.geom.Point2D;
+
 /**
  * @author richard
  *
@@ -18,6 +20,7 @@ public class PosicionOrbital {
 	private long posicionAngular;
 	private double posicionCartesaianaX;
 	private double posicionCartesaianaY;
+	private Point2D coordenadas;
 
 
 	public PosicionOrbital(Planeta p, long idPeriodo) {
@@ -58,6 +61,15 @@ public class PosicionOrbital {
 		this.posicionAngular = posicionAngular;
 	}
 
+	
+	/**
+	 * @return the getCoordenadas
+	 */
+	public Point2D getCoordenadas() {
+		return this.coordenadas;
+	}
+	
+	
 	/**
 	 * @return the posicionCartesaianaX
 	 */
@@ -141,7 +153,8 @@ public class PosicionOrbital {
 		
 		//System.out.println((double)Math.round(Math.sin(Math.toRadians(this.posicionAngular)) * 10000d) / 10000d);
 		
-
+		this.coordenadas = new Point2D.Double(posicionCartesaianaX, posicionCartesaianaY);
+//		this.coordenadas.setLocation(posicionCartesaianaX, posicionCartesaianaY);
 	}
 
 	/* (non-Javadoc)
@@ -149,9 +162,9 @@ public class PosicionOrbital {
 	 */
 	@Override
 	public String toString() {
-		return "PosicionOrbital [IdentificadorPeriodo=" + IdentificadorPeriodo + ", nombrePlaneta=" + nombrePlaneta
+		return "\nPosicionOrbital [IdentificadorPeriodo=" + IdentificadorPeriodo + ", nombrePlaneta=" + nombrePlaneta
 				+ ", posicionAngular=" + posicionAngular + ", posicionCartesaianaX=" + posicionCartesaianaX
-				+ ", posicionCartesaianaY=" + posicionCartesaianaY + "]";
+				+ ", posicionCartesaianaY=" + posicionCartesaianaY + ", coordenadas=" + coordenadas + "]";
 	}
 
 }

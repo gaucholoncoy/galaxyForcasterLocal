@@ -13,6 +13,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dev.galaxyForcaster.DAO.DBHelper;
+import dev.galaxyForcaster.DAO.PlanetaDao;
+import dev.galaxyForcaster.DAO.PosicionOrbitalDao;
+import dev.galaxyForcaster.DAO.PronosticoDao;
 import dev.galaxyForcaster.entities.GalaxyConfig;
 import dev.galaxyForcaster.entities.Planeta;
 import dev.galaxyForcaster.entities.PosicionOrbital;
@@ -62,13 +66,18 @@ public class Forcaster {
 			
 			confGalaxia.setPlanetas((ArrayList<Planeta>) planetas1);
 			
+			// crear la db.
+			DBHelper.createNewDatabase();
+			DBHelper.dropTables();
+			DBHelper.createTables();
+			
 			// Validar json + planetascreacion de planetas , si error ==> excepcion and fin
 
 			if (confGalaxia.persistPlanetas()) {
 
 				planetas = confGalaxia.getPlanetas();
 
-				for (int dia = 1; dia < confGalaxia.getPeriodosForcast(); dia++) {
+				for (int dia = 1; dia <= confGalaxia.getPeriodosForcast(); dia++) {
 
 					
 					PosicionesOrbitales.clear();
@@ -76,7 +85,7 @@ public class Forcaster {
 					Iterator<Planeta> it = planetas.iterator();
 					
 					Planeta pa =null;
-					System.out.println("Ciclo " + dia +" de " + confGalaxia.getPeriodosForcast() );					
+					System.out.println("\n Ciclo " + dia +" de " + confGalaxia.getPeriodosForcast() );					
 					while (it.hasNext()) {
 						pa = it.next();
 						
@@ -84,18 +93,27 @@ public class Forcaster {
 						
 						PosicionOrbital po = new PosicionOrbital(pa, dia);
 						
+						
 						pa.setPosicionAngularActual(po.getPosicionAngular());
 						
+						PlanetaDao.update(pa);
+						
 						System.out.println(po.toString());
+						
+						PosicionOrbitalDao.insertar(po);
 						
 						PosicionesOrbitales.add(po);
 
 					}
 
 					Pronostico pron = new Pronostico(dia, PosicionesOrbitales);
-					System.out.println("Resultado :" + pron.existeAlineacion());
+					
+					pron.analizarCondiciones();
+					
+					PronosticoDao.insertar(pron);
+					
 					System.out.println(pron.toString());
-
+					System.out.println("\n Fin Ciclo " + dia +" de " + confGalaxia.getPeriodosForcast() );		
 				}
 				System.out.println("999991");
 			}
@@ -112,5 +130,7 @@ public class Forcaster {
 		// TODO Auto-generated method stub
 
 	}
+
+
 
 }
