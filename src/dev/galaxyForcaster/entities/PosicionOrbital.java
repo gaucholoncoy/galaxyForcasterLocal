@@ -4,13 +4,14 @@
 package dev.galaxyForcaster.entities;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 /**
  * @author richard
  *
  */
-public class PosicionOrbital {
-
+public class PosicionOrbital implements Serializable {
+	private static final long serialVersionUID = 5826191735682596960L;
 	/**
 	 * 
 	 */

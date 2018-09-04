@@ -2,7 +2,7 @@
 	{
 		"nombre": "Ferengis",
 		"velocidadAngular": "1",
-		"distanciaSol": "50",
+		"distanciaSol": "500",
 		"sentidoGiroOrbita": "HORARIO",
 		"posicionAngularInicial": "0",
 		"posicionAngularActual": "0"
@@ -10,7 +10,7 @@
 	{
 		"nombre": "Betasoides",
 		"velocidadAngular": "3",
-		"distanciaSol": "20",
+		"distanciaSol": "2000",
 		"sentidoGiroOrbita": "HORARIO",
 		"posicionAngularInicial": "0",
 		"posicionAngularActual": "0"
@@ -18,7 +18,7 @@
 	{
 		"nombre": "Vulcano",
 		"velocidadAngular": "5",
-		"distanciaSol": "10",
+		"distanciaSol": "1000",
 		"sentidoGiroOrbita": "ANTIHORARIO",
 		"posicionAngularInicial": "0",
 		"posicionAngularActual": "0"

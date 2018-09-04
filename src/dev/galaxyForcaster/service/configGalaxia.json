@@ -1,1 +1,31 @@
-{ "periodosForcast": "560" }
+{
+   "periodosForcast": "10",
+   "planetas": [
+      {
+         "nombre": "Ferengis",
+         "velocidadAngular": "1",
+         "distanciaSol": "5000",
+         "sentidoGiroOrbita": "HORARIO",
+         "posicionAngularInicial": "0",
+         "posicionAngularActual": "0"
+      },
+      {
+         "nombre": "Betasoides",
+         "velocidadAngular": "3",
+         "distanciaSol": "2000",
+         "sentidoGiroOrbita": "HORARIO",
+         "posicionAngularInicial": "0",
+         "posicionAngularActual": "0"
+      },
+      {
+         "nombre": "Vulcano",
+         "velocidadAngular": "5",
+         "distanciaSol": "1000",
+         "sentidoGiroOrbita": "ANTIHORARIO",
+         "posicionAngularInicial": "0",
+         "posicionAngularActual": "0"
+      }
+   ]
+}
+
+

@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import dev.galaxyForcaster.entities.*;
+import dev.galaxyForcaster.entities.Planeta;
 
 /**
  * @author richard

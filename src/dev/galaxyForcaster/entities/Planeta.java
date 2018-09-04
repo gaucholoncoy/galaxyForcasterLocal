@@ -3,12 +3,14 @@
  */
 package dev.galaxyForcaster.entities;
 
+import java.io.Serializable;
+
 /**
  * @author richard
  *
  */
-public class Planeta {
-
+public class Planeta implements Serializable {
+	private static final long serialVersionUID = 8826191735682596960L;
 	/**
 	 * 
 	 */
@@ -104,7 +106,7 @@ public class Planeta {
 	 * @return the posicionAngularActual
 	 */
 	public long getPosicionAngularActual() {
-				return ( (posicionAngularActual==0)? posicionAngularInicial:posicionAngularActual);
+		return ((posicionAngularActual == 0) ? posicionAngularInicial : posicionAngularActual);
 	}
 
 	/**
@@ -114,7 +116,9 @@ public class Planeta {
 		this.posicionAngularActual = posicionAngularActual;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

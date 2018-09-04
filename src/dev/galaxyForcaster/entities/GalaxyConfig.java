@@ -1,12 +1,17 @@
 package dev.galaxyForcaster.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import dev.galaxyForcaster.DAO.PlanetaDao;
 
-public class GalaxyConfig {
 
+
+public class GalaxyConfig implements Serializable {
+	
+	private static final long serialVersionUID = 30603850117689481L;
+	
 	private int periodosForcast;
 	private ArrayList<Planeta> planetas;
 
@@ -35,7 +40,7 @@ public class GalaxyConfig {
 		Iterator<Planeta> it = planetas.iterator();
 		while (it.hasNext()) {
 			PlanetaDao.insertar((Planeta) it.next());
-			
+
 		}
 
 		return true;

@@ -4,16 +4,34 @@
 package dev.galaxyForcaster.entities;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import dev.galaxyForcaster.DAO.DBHelper;
+import dev.galaxyForcaster.DAO.PronosticoDao;
 import dev.galaxyForcaster.service.Constantes;
+import dev.galaxyForcaster.service.ForcastService;
 
 /**
  * @author richard
  *
  */
-public class Pronostico {
-
+@XmlRootElement
+public class Pronostico implements Serializable {
+	
+	
+	final static Logger log = LoggerFactory.getLogger(ForcastService.class);
+	
+	
+	private static final long serialVersionUID = 6826191735682596960L;
 	/**
 	 * 
 	 */
@@ -30,6 +48,10 @@ public class Pronostico {
 		// TODO Auto-generated constructor stub
 		this.identificadorPeriodo = Id;
 		this.posicionOrbitales = po;
+	}
+
+	public Pronostico() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public void analizarCondiciones() {
@@ -115,7 +137,7 @@ public class Pronostico {
 	/**
 	 * @param perimetroArea the perimetroArea to set
 	 */
-	public void setPerimetroArea(long perimetroArea) {
+	public void setPerimetroArea(double perimetroArea) {
 		this.perimetroArea = perimetroArea;
 	}
 
@@ -131,6 +153,18 @@ public class Pronostico {
 	 */
 	public void setCondicionClimatica(String condicionClimatica) {
 		this.condicionClimatica = condicionClimatica;
+	}
+
+	/**
+	 * @param consultarPronostico the consultarPronostico to set
+	 */
+	public String consultarPronostico(int dia) {
+		
+		Pronostico pron = PronosticoDao.consultarPronostico(dia);
+		
+		log.debug(" condicion climatica" + pron.getCondicionClimatica());
+		
+		return pron.getCondicionClimatica();
 	}
 
 }

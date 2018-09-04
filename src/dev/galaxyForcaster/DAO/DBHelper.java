@@ -6,14 +6,27 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.sqlite.JDBC;
+
 import dev.galaxyForcaster.service.Constantes;
 
 public class DBHelper {
+	
+	 static {
+	        try {
+	            DriverManager.registerDriver(new JDBC());
+	        }
+	        catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 
 	public static Connection getConexion() {
 
 		Connection conn = null;
+
 		try {
+
 			conn = DriverManager.getConnection(Constantes.URL);
 
 		} catch (SQLException e) {
