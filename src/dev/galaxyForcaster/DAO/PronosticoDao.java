@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import dev.galaxyForcaster.entities.Pronostico;
 
@@ -27,6 +29,9 @@ public class PronosticoDao {
 
 	public static final String UPDATE = "UPDATE Pronostico  set perimetroArea =?,condicionClimatica =? where IdentificadorPeriodo =? ";
 	public static final String QUERY_list_clima = "select * from pronostico p where p.IdentificadorPeriodo = ?";
+	public static final String QUERY_list_estadisticas_clima = "select p.condicionClimatica as periodo ,  count(*) as cantidad from pronostico p group by p.condicionClimatica";
+
+	public static final String QUERY_list_estadisticas_lluvia = "select p.IdentificadorPeriodo, p.perimetroArea from pronostico p where p.perimetroArea in (select max(a.perimetroArea) from pronostico a where a.condicionClimatica='LLUVIA')";
 
 	public static void insertar(Pronostico p) {
 
@@ -79,7 +84,7 @@ public class PronosticoDao {
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		Pronostico pro=null;
+		Pronostico pro = null;
 
 		try {
 			conn = DBHelper.getConexion();
@@ -91,12 +96,11 @@ public class PronosticoDao {
 			ResultSet rs = pstmt.executeQuery();
 
 			// loop through the result set
-			
+
 			while (rs.next()) {
 				pro = new Pronostico();
-				pro.setIdentificadorPeriodo(rs.getLong("IdentificadorPeriodo"));
 				pro.setCondicionClimatica(rs.getString("condicionClimatica"));
-				pro.setPerimetroArea(rs.getDouble("perimetroArea"));
+				pro.setPerimetroArea(rs.getDouble("cantidad"));
 			}
 			rs.close();
 		} catch (SQLException e) {
@@ -105,6 +109,66 @@ public class PronosticoDao {
 			DBHelper.releaseConexion(conn, pstmt);
 		}
 		return pro;
+
+	}
+
+	public static LinkedHashMap<String, String> consultarEstadisticasPeriodos() {
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		Pronostico pro = null;
+		LinkedHashMap<String, String> estadisticasPeriodos = new LinkedHashMap<String, String>();
+		try {
+			conn = DBHelper.getConexion();
+
+			pstmt = conn.prepareStatement(QUERY_list_estadisticas_clima);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			// loop through the result set
+
+
+			while (rs.next()) {
+
+				estadisticasPeriodos.put(rs.getString("periodo"), rs.getString("cantidad"));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			DBHelper.releaseConexion(conn, pstmt);
+		}
+		return estadisticasPeriodos;
+
+	}
+	
+	public static LinkedHashMap<String, String> consultarestadisticasLLuvia() {
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		Pronostico pro = null;
+		LinkedHashMap<String, String> estadisticasLLuvia = new LinkedHashMap<String, String>();
+		try {
+			conn = DBHelper.getConexion();
+
+			pstmt = conn.prepareStatement(QUERY_list_estadisticas_lluvia);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			// loop through the result set
+
+
+			while (rs.next()) {
+
+				estadisticasLLuvia.put(rs.getString("IdentificadorPeriodo"), rs.getString("perimetroArea"));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			DBHelper.releaseConexion(conn, pstmt);
+		}
+		return estadisticasLLuvia;
 
 	}
 

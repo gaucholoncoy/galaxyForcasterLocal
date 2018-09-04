@@ -9,6 +9,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -19,6 +23,7 @@ import dev.galaxyForcaster.DAO.DBHelper;
 import dev.galaxyForcaster.DAO.PronosticoDao;
 import dev.galaxyForcaster.service.Constantes;
 import dev.galaxyForcaster.service.ForcastService;
+import javassist.bytecode.Descriptor.Iterator;
 
 /**
  * @author richard
@@ -26,11 +31,9 @@ import dev.galaxyForcaster.service.ForcastService;
  */
 @XmlRootElement
 public class Pronostico implements Serializable {
-	
-	
+
 	final static Logger log = LoggerFactory.getLogger(ForcastService.class);
-	
-	
+
 	private static final long serialVersionUID = 6826191735682596960L;
 	/**
 	 * 
@@ -97,7 +100,8 @@ public class Pronostico implements Serializable {
 			Triangulo triangulo = new Triangulo(puntoA, puntoB, puntoC, pSol);
 			if (triangulo.isPuntoInTriangulo())
 				condicionClimatica = Constantes.LLUVIA;
-			this.perimetroArea = triangulo.getPerimetro();
+			this.perimetroArea = (double) Math.round((triangulo.getPerimetro() * 1000d) / 1000d);
+
 		}
 
 	}
@@ -159,12 +163,48 @@ public class Pronostico implements Serializable {
 	 * @param consultarPronostico the consultarPronostico to set
 	 */
 	public String consultarPronostico(int dia) {
-		
+
 		Pronostico pron = PronosticoDao.consultarPronostico(dia);
-		
+
 		log.debug(" condicion climatica" + pron.getCondicionClimatica());
-		
+
 		return pron.getCondicionClimatica();
+	}
+
+	/**
+	 * @param consultarEstadisticasPeriodos the consultarEstadisticasPeriodos to set
+	 */
+	public List<Estadistica> consultarEstadisticasPeriodos() {
+
+		LinkedHashMap<String, String> estadisticasPeriodos = new LinkedHashMap<String, String>();
+
+		estadisticasPeriodos = PronosticoDao.consultarEstadisticasPeriodos();
+
+		List<Estadistica> estadisticas = new ArrayList<Estadistica>();
+
+		for (Map.Entry<String, String> entry : estadisticasPeriodos.entrySet()) {
+			String periodo = entry.getKey();
+			String cantidad = entry.getValue();
+			Estadistica est = new Estadistica("Totales por tipo de clima", periodo, cantidad);
+			estadisticas.add(est);
+		}
+
+		estadisticasPeriodos.clear();
+
+		estadisticasPeriodos = PronosticoDao.consultarestadisticasLLuvia();
+
+		for (Map.Entry<String, String> entry : estadisticasPeriodos.entrySet()) {
+			String IdentificadorPeriodo = entry.getKey();
+			String perimetroArea = entry.getValue();
+			Estadistica est = new Estadistica("Pico Max lluvia", IdentificadorPeriodo, perimetroArea);
+			estadisticas.add(est);
+		}
+
+		estadisticasPeriodos = PronosticoDao.consultarEstadisticasPeriodos();
+
+		log.debug(" consultarEstadisticasPeriodos");
+
+		return estadisticas;
 	}
 
 }
