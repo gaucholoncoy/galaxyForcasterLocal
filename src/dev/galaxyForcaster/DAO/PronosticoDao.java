@@ -8,11 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
-import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.galaxyForcaster.entities.Pronostico;
 
 /**
+ * Clase de acceso a DB para ser usado por la clase Pronostico, la idea es evolucionar hacia una persistencia 
+ * mas amigable que esta
  * @author richard
  *
  */
@@ -21,6 +25,9 @@ public class PronosticoDao {
 	/**
 	 * 
 	 */
+
+	final static Logger log = LoggerFactory.getLogger(PosicionOrbitalDao.class);
+
 	public PronosticoDao() {
 		// TODO Auto-generated constructor stub
 	}
@@ -33,6 +40,12 @@ public class PronosticoDao {
 
 	public static final String QUERY_list_estadisticas_lluvia = "select p.IdentificadorPeriodo, p.perimetroArea from pronostico p where p.perimetroArea in (select max(a.perimetroArea) from pronostico a where a.condicionClimatica='LLUVIA')";
 
+	/**
+	 * Metodo de Insertar un Pronostico 
+	 * 
+	 * @author richard
+	 **@param Pronostico p 
+	 */
 	public static void insertar(Pronostico p) {
 
 		Connection conn = null;
@@ -49,13 +62,19 @@ public class PronosticoDao {
 			pstmt.executeUpdate();
 
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		} finally {
 			DBHelper.releaseConexion(conn, pstmt);
 		}
 
 	}
 
+	/**
+	 * Metodo de update un Pronostico 
+	 * 
+	 * @author richard
+	 **@param Pronostico p 
+	 */
 	public static void update(Pronostico p) {
 
 		Connection conn = null;
@@ -73,12 +92,19 @@ public class PronosticoDao {
 			pstmt.executeUpdate();
 
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		} finally {
 			DBHelper.releaseConexion(conn, pstmt);
 		}
 
 	}
+	
+	/**
+	 * Metodo de consulta de pronistico para un dia en particual  
+	 * 
+	 * @author richard
+	 **@param int dia, devuelve un objeto pronostico 
+	 */
 
 	public static Pronostico consultarPronostico(int dia) {
 
@@ -104,7 +130,7 @@ public class PronosticoDao {
 			}
 			rs.close();
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		} finally {
 			DBHelper.releaseConexion(conn, pstmt);
 		}
@@ -112,11 +138,18 @@ public class PronosticoDao {
 
 	}
 
+	/**
+	 * Metodo de consulta de las estadisticas de los pronosticos ,  agrupados por tipo de clima y cantidas de cada tipo
+	 * 
+	 * @author richard
+	 **@param int dia
+	 *devuelve una lista de metricas( periodo, cantidad)
+	 */
 	public static LinkedHashMap<String, String> consultarEstadisticasPeriodos() {
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		Pronostico pro = null;
+
 		LinkedHashMap<String, String> estadisticasPeriodos = new LinkedHashMap<String, String>();
 		try {
 			conn = DBHelper.getConexion();
@@ -127,26 +160,35 @@ public class PronosticoDao {
 
 			// loop through the result set
 
-
 			while (rs.next()) {
 
 				estadisticasPeriodos.put(rs.getString("periodo"), rs.getString("cantidad"));
 			}
 			rs.close();
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		} finally {
 			DBHelper.releaseConexion(conn, pstmt);
 		}
 		return estadisticasPeriodos;
 
 	}
+
+	
+	/**
+	 * Metodo de consulta de las estadisticas de los lluvia maximas y en que dia fue.
+	 * 
+	 * @author richard
+	 **@param int dia
+	 *devuelve una lista de metricas( IdentificadorPeriodo, perimetroArea)
+	 *									dia, cantidad de lluvia de ese ma
+	 */
 	
 	public static LinkedHashMap<String, String> consultarestadisticasLLuvia() {
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		Pronostico pro = null;
+
 		LinkedHashMap<String, String> estadisticasLLuvia = new LinkedHashMap<String, String>();
 		try {
 			conn = DBHelper.getConexion();
@@ -157,14 +199,13 @@ public class PronosticoDao {
 
 			// loop through the result set
 
-
 			while (rs.next()) {
 
 				estadisticasLLuvia.put(rs.getString("IdentificadorPeriodo"), rs.getString("perimetroArea"));
 			}
 			rs.close();
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		} finally {
 			DBHelper.releaseConexion(conn, pstmt);
 		}

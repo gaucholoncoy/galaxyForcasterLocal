@@ -5,11 +5,18 @@ package dev.galaxyForcaster.entities;
 
 import java.io.Serializable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
+ * Clase de negocio para modelar el objeto planeta 
  * @author richard
  *
  */
 public class Planeta implements Serializable {
+
+	final static Logger log = LoggerFactory.getLogger(Planeta.class);
+
 	private static final long serialVersionUID = 8826191735682596960L;
 	/**
 	 * 
@@ -103,6 +110,8 @@ public class Planeta implements Serializable {
 	}
 
 	/**
+	 * si la posicionangular actual es 0 signifca que no se movio en la orbita y podria ser
+	 * que la posicion inicial no fuera cero, por eso la opcionalidad en el return
 	 * @return the posicionAngularActual
 	 */
 	public long getPosicionAngularActual() {

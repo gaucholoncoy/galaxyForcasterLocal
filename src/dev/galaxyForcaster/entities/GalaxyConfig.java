@@ -6,17 +6,25 @@ import java.util.Iterator;
 
 import dev.galaxyForcaster.DAO.PlanetaDao;
 
-
-
+/**
+ * Clase para contener la configuracion inicial en la generacion de metricas que
+ * se envian en el json del BODY del END POINT POST /galaxyForcaster/rest/clima/inicio
+ * @author richard
+ *
+ */
 public class GalaxyConfig implements Serializable {
-	
+
 	private static final long serialVersionUID = 30603850117689481L;
+
+	// Dias para calcular los pronosticos
 	
-	private int periodosForcast;
+	private int periodosForcast; 
+	
+	// Lista de los planetas de la galaxia
 	private ArrayList<Planeta> planetas;
 
 	public GalaxyConfig() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getPeriodosForcast() {
@@ -35,6 +43,7 @@ public class GalaxyConfig implements Serializable {
 		this.planetas = planetas;
 	}
 
+	// Metodo para hacer la primera persistencia de los planetas en el proceso batch
 	public boolean persistPlanetas() {
 
 		Iterator<Planeta> it = planetas.iterator();

@@ -1,13 +1,14 @@
 package dev.galaxyForcaster.service;
 
 import java.util.ArrayList;
+
+
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -17,12 +18,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import dev.galaxyForcaster.entities.Estadistica;
 import dev.galaxyForcaster.entities.Pronostico;
+
+/**
+ * Clase del servicio de atencion de los EP
+ * 
+ * @author richard
+ *
+ */
 
 @Path("clima")
 public class ForcastService {
@@ -33,6 +40,13 @@ public class ForcastService {
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	/**
+	 * Metodo de atencion del EP 	POST  /galaxyForcaster/rest/clima/inicio
+	 * 
+	 * @author richard
+	 *
+	 */
 	@POST
 	@Path("inicio")
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -44,6 +58,15 @@ public class ForcastService {
 		return "<html lang=\"en\"><body><h1>" + resultado + "</h1></body></html>";
 	}
 
+	
+	
+	/**
+	 * Metodo de atencion del EP •	GET   /galaxyForcaster/rest/clima?dia=xxxxx
+	 * 
+	 * @author richard
+	 *
+	 */
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response consultarPronosticoxDia(@QueryParam("dia") int dia) {
@@ -66,6 +89,13 @@ public class ForcastService {
 		return Response.status(200).entity(result).build();
 
 	}
+	
+	/**
+	 * Metodo de atencion del EP 	GET   •	GET /galaxyForcaster/rest/clima/estadistica
+	 * 
+	 * @author richard
+	 *
+	 */
 
 	@GET
 	@Path("estadistica")

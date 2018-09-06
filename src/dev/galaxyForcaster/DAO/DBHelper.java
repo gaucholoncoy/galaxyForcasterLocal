@@ -6,21 +6,35 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sqlite.JDBC;
 
 import dev.galaxyForcaster.service.Constantes;
 
+/**
+ * Clase para acceder a la DB y  ejecutar los comando SQL tanto DDL como DML
+ * @author richard
+ *
+ */
 public class DBHelper {
-	
-	 static {
-	        try {
-	            DriverManager.registerDriver(new JDBC());
-	        }
-	        catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
 
+	final static Logger log = LoggerFactory.getLogger(DBHelper.class);
+
+// en Apache  da erro de carga del jdbc y buscando encontre esta WA  que funciona, 
+	static {
+		try {
+			DriverManager.registerDriver(new JDBC());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Metodo para dar una conexion a alguna clase DAO que la utilizar
+	 * @author richard
+	 *
+	 */
 	public static Connection getConexion() {
 
 		Connection conn = null;
@@ -30,12 +44,17 @@ public class DBHelper {
 			conn = DriverManager.getConnection(Constantes.URL);
 
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		}
 		return conn;
 
 	}
 
+	/**
+	 * Metodo para liberar y no tener MLeaks en el cierre de stmt y conn a la DB
+	 * @author richard
+	 *
+	 */
 	public static void releaseConexion(Connection conn, Statement stmt) {
 
 		try {
@@ -51,6 +70,12 @@ public class DBHelper {
 
 	}
 
+	/**
+	 * Metodo para ejecutar sentencias que no requieren informacion de respuesta
+	 * 
+	 * @author richard
+	 *
+	 */
 	public static void executeSQL(String sql) {
 
 		Connection conn = null;
@@ -62,7 +87,7 @@ public class DBHelper {
 			stmt.execute(sql);
 
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		} finally {
 			DBHelper.releaseConexion(conn, stmt);
 		}
@@ -70,23 +95,29 @@ public class DBHelper {
 	}
 
 	/**
-	 * Connect to a sample database
+	 * Metodo para crear la db cada vez que se invoca l ENDPOINT galaxyForcaster/rest/clima/inicio
 	 *
-	 * @param fileName the database file name
+	 *  * @author richard
 	 */
 	public static void createNewDatabase() {
 
 		try (Connection conn = DriverManager.getConnection(Constantes.URL)) {
 			if (conn != null) {
 				DatabaseMetaData meta = conn.getMetaData();
-				System.out.println("The driver name is " + meta.getDriverName());
-				System.out.println("A new database has been created.");
+				log.debug("The driver name is " + meta.getDriverName());
+				log.debug("A new database has been created.");
 			}
 
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		}
 	}
+	
+	/**
+	 * Metodo para crear tablas 
+	 *
+	 *  * @author richard
+	 */
 
 	public static void createTables() {
 		// SQLite connection string
@@ -96,15 +127,21 @@ public class DBHelper {
 		try (Connection conn = DriverManager.getConnection(Constantes.URL); Statement stmt = conn.createStatement()) {
 			// create a new table
 			stmt.execute(Constantes.SQL_Creacion_Planeta);
-			System.out.println("Creacion de table " + Constantes.SQL_Creacion_Planeta);
+			log.debug("Creacion de table " + Constantes.SQL_Creacion_Planeta);
 			stmt.execute(Constantes.SQL_Creacion_PosicionOrbital);
-			System.out.println("Creacion de table " + Constantes.SQL_Creacion_PosicionOrbital);
+			log.debug("Creacion de table " + Constantes.SQL_Creacion_PosicionOrbital);
 			stmt.execute(Constantes.SQL_Creacion_Pronostico);
-			System.out.println("Creacion de table " + Constantes.SQL_Creacion_Pronostico);
+			log.debug("Creacion de table " + Constantes.SQL_Creacion_Pronostico);
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		}
 	}
+	
+	/**
+	 * Metodo para dropear las tablas cuando se recrea la db luego de invocar al ENDPOINT galaxyForcaster/rest/clima/inicio
+	 *
+	 *  * @author richard
+	 */
 
 	public static void dropTables() {
 		// SQLite connection string
@@ -114,13 +151,13 @@ public class DBHelper {
 		try (Connection conn = DriverManager.getConnection(Constantes.URL); Statement stmt = conn.createStatement()) {
 			// create a new table
 			stmt.execute(Constantes.SQL_Drop_Planeta);
-			System.out.println("Drop de table " + Constantes.SQL_Drop_Planeta);
+			log.debug("Drop de table " + Constantes.SQL_Drop_Planeta);
 			stmt.execute(Constantes.SQL_Drop_PosicionOrbital);
-			System.out.println("Drop de table " + Constantes.SQL_Drop_PosicionOrbital);
+			log.debug("Drop de table " + Constantes.SQL_Drop_PosicionOrbital);
 			stmt.execute(Constantes.SQL_Drop_Pronostico);
-			System.out.println("Drop de table " + Constantes.SQL_Drop_Pronostico);
+			log.debug("Drop de table " + Constantes.SQL_Drop_Pronostico);
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			log.debug(e.getMessage());
 		}
 	}
 }

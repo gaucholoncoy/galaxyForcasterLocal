@@ -3,9 +3,6 @@
  */
 package dev.galaxyForcaster.service;
 
-
-
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -33,7 +30,7 @@ public class ServletContextListener4Logback implements ServletContextListener {
 		// modulo web.
 		// Sin esto recien cargaria cuando llega el primer mensaje.
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-		// System.out.println(loggerContext.isStarted());
+		// log.debug(loggerContext.isStarted());
 		Logger rootLogger = lc.getLogger(Logger.ROOT_LOGGER_NAME);
 
 		try {
@@ -45,7 +42,7 @@ public class ServletContextListener4Logback implements ServletContextListener {
 			}
 			rootLogger.info("(web.xml) APP_PREFIX		: {}", appPrefix);
 			rootLogger.info("(logback.xml) APP_DIR		: {}", lc.getProperty(appPrefix + ".APP_DIR"));
-			rootLogger.info("(logback.xml) APP_LOG		: {}", lc.getProperty(appPrefix + ".APP_LOG"));			
+			rootLogger.info("(logback.xml) APP_LOG		: {}", lc.getProperty(appPrefix + ".APP_LOG"));
 		} catch (Exception e) {
 
 			rootLogger.error("Error en los logs de inicio de la aplicacion", e);
@@ -63,6 +60,3 @@ public class ServletContextListener4Logback implements ServletContextListener {
 	}
 
 }
-
-
-

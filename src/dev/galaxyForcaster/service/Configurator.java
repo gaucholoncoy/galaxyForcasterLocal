@@ -4,6 +4,7 @@
 package dev.galaxyForcaster.service;
 
 import java.io.BufferedReader;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,13 +28,17 @@ import dev.galaxyForcaster.entities.PosicionOrbital;
 import dev.galaxyForcaster.entities.Pronostico;
 
 /**
+ * Clase utilitaria para hacer el proceso batch de la generacion de pronosticos 
+ * en funcion al json recibido en el END POINT 
+ * tambien se puede usar de metodo main que seria lo mismo
+
  * @author richard
  *
  */
 public class Configurator {
 
 	final static Logger log = LoggerFactory.getLogger(Configurator.class);
-	
+
 	/**
 	 * 
 	 */
@@ -48,14 +53,14 @@ public class Configurator {
 	public static void main(String[] args) {
 
 		try {
-			
+
 			log.debug(" Query getStatusService ");
-			
-			String filePath="C:\\Users\\richard\\Desktop\\mercadolibre\\galaxyForcaster\\src\\dev\\galaxyForcaster\\service\\configGalaxia.json";
-			
-			String json=Configurator.readFileToString(filePath);
-			
-			String resultado = Configurator.init(json);
+
+			String filePath = "C:\\Users\\richard\\Desktop\\mercadolibre\\galaxyForcaster\\src\\dev\\galaxyForcaster\\service\\configGalaxia.json";
+
+			String json = Configurator.readFileToString(filePath);
+
+			 Configurator.init(json);
 
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -70,37 +75,34 @@ public class Configurator {
 		// TODO Auto-generated method stub
 
 	}
-	
-	//http://www.mysamplecode.com/2011/07/java-convert-file-to-string.html
+
+	// http://www.mysamplecode.com/2011/07/java-convert-file-to-string.html
 	// no me parecio necesario usar jar de apache commons
-	
-	private static String readFileToString(String filePath)
-		    throws java.io.IOException{
 
-		        StringBuffer fileData = new StringBuffer(1000);
-		        BufferedReader reader = new BufferedReader(
-		                new FileReader(filePath));
-		        char[] buf = new char[1024];
+	private static String readFileToString(String filePath) throws java.io.IOException {
 
-		        int numRead=0;
-		        while((numRead=reader.read(buf)) != -1){
-		            String readData = String.valueOf(buf, 0, numRead);
-		            fileData.append(readData);
-		            buf = new char[1024];
-		        }
+		StringBuffer fileData = new StringBuffer(1000);
+		BufferedReader reader = new BufferedReader(new FileReader(filePath));
+		char[] buf = new char[1024];
 
-		        reader.close();
-		        System.out.println(fileData.toString());
-		        return fileData.toString();
-		    }
+		int numRead = 0;
+		while ((numRead = reader.read(buf)) != -1) {
+			String readData = String.valueOf(buf, 0, numRead);
+			fileData.append(readData);
+			buf = new char[1024];
+		}
+
+		reader.close();
+		log.debug(fileData.toString());
+		return fileData.toString();
+	}
 
 	/**
 	 * @param args
 	 */
 	public static String init(String configuracion) {
-		
-		GalaxyConfig config =null;
-		
+
+		GalaxyConfig config = null;
 
 		ArrayList<Planeta> planetas = new ArrayList<Planeta>();
 
@@ -108,12 +110,12 @@ public class Configurator {
 
 		try {
 
-			System.out.print("++++++++++++++");
-			
+			log.debug(" ++++++++++++++");
+
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-			config = mapper.readValue(configuracion, GalaxyConfig.class);			
+			config = mapper.readValue(configuracion, GalaxyConfig.class);
 
 			// crear la db.
 			DBHelper.createNewDatabase();
@@ -131,11 +133,11 @@ public class Configurator {
 					Iterator<Planeta> it = planetas.iterator();
 
 					Planeta pa = null;
-					System.out.println("\n Ciclo " + dia + " de " + config.getPeriodosForcast());
+					log.debug("\n Ciclo " + dia + " de " + config.getPeriodosForcast());
 					while (it.hasNext()) {
 						pa = it.next();
 
-						System.out.println(pa.toString());
+						log.debug(pa.toString());
 
 						PosicionOrbital po = new PosicionOrbital(pa, dia);
 
@@ -143,7 +145,7 @@ public class Configurator {
 
 						PlanetaDao.update(pa);
 
-						System.out.println(po.toString());
+						log.debug(po.toString());
 
 						PosicionOrbitalDao.insertar(po);
 
@@ -157,10 +159,10 @@ public class Configurator {
 
 					PronosticoDao.insertar(pron);
 
-					System.out.println(pron.toString());
-					System.out.println("\n Fin Ciclo " + dia + " de " + config.getPeriodosForcast());
+					log.debug(pron.toString());
+					log.debug("\n Fin Ciclo " + dia + " de " + config.getPeriodosForcast());
 				}
-				System.out.println("FIN");
+				log.debug("FIN");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

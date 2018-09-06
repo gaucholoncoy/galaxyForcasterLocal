@@ -5,27 +5,24 @@ package dev.galaxyForcaster.entities;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.galaxyForcaster.DAO.DBHelper;
 import dev.galaxyForcaster.DAO.PronosticoDao;
 import dev.galaxyForcaster.service.Constantes;
 import dev.galaxyForcaster.service.ForcastService;
-import javassist.bytecode.Descriptor.Iterator;
 
 /**
+ * Clase para tracker la informacion de el  pronistico de un dia en particular
+ * tambien tiene la logica para analizar y definir cual es la condicion climatica del dia
+ *   * 
  * @author richard
  *
  */
@@ -57,6 +54,18 @@ public class Pronostico implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Metodo para analiza y decidir la condicion del dia
+	 * sinteticamente se toman las posiciones orbitales de los planetas
+	 * se arman 3 vectores AB, AC y AP(entre planeta A y el sol)
+	 * y se comprueban si existe combinacion lineal entre AB y AC y luego entre AB y AP
+	 * tambien se evalua si el punto(0,0) esta incluido en tringulo formado por los punto A,B y C
+	 *  para tracker la informacion de el  pronistico de un dia en particular
+	 * tambien tiene la logica para analizar y definir cual es la condicion climatica del dia
+	 *   * 
+	 * @author richard
+	 *
+	 */
 	public void analizarCondiciones() {
 
 		Point2D puntoA = posicionOrbitales.get(0).getCoordenadas();
@@ -66,19 +75,25 @@ public class Pronostico implements Serializable {
 
 		Vector vectorAB = new Vector(puntoA, puntoB, posicionOrbitales.get(0).getNombrePlaneta(),
 				posicionOrbitales.get(1).getNombrePlaneta());
-		System.out.println(vectorAB);
+		log.debug(vectorAB.toString());
 
-		Vector vectorBC = new Vector(puntoB, puntoC, posicionOrbitales.get(1).getNombrePlaneta(),
+//		Vector vectorBC = new Vector(puntoB, puntoC, posicionOrbitales.get(1).getNombrePlaneta(),
+//				posicionOrbitales.get(2).getNombrePlaneta());
+
+		Vector vectorAC = new Vector(puntoA, puntoC, posicionOrbitales.get(0).getNombrePlaneta(),
 				posicionOrbitales.get(2).getNombrePlaneta());
-		System.out.println(vectorBC);
+		
+		//log.debug(vectorBC.toString());
+		log.debug(vectorAC.toString());
 
-		Vector vectorSol = new Vector(puntoB, pSol, posicionOrbitales.get(1).getNombrePlaneta(), "SOL");
+//		Vector vectorSol = new Vector(puntoB, pSol, posicionOrbitales.get(1).getNombrePlaneta(), "SOL");
+		Vector vectorSol = new Vector(puntoA, pSol, posicionOrbitales.get(0).getNombrePlaneta(), "SOL");
+		log.debug(vectorSol.toString());
 
-		System.out.println(vectorSol);
-
-		if (vectorAB.isCombinacionLinearDe(vectorBC)) {
-
-			System.out.println("hay combinacion lineal 0");
+//		if (vectorAB.isCombinacionLinearDe(vectorBC)) {
+		
+		if (vectorAB.isCombinacionLinearDe(vectorAC)) {
+			log.debug("hay combinacion lineal 0");
 
 //			vectorAB = new Vector(puntoB, puntoC, posicionOrbitales.get(1).getNombrePlaneta(),posicionOrbitales.get(2).getNombrePlaneta());
 
@@ -86,12 +101,12 @@ public class Pronostico implements Serializable {
 
 //			vectorBC = new Vector(puntoB, puntoC, posicionOrbitales.get(1).getNombrePlaneta(), "SOL");
 
-			if (vectorBC.isCombinacionLinearDe(vectorSol)) {
+			if (vectorAB.isCombinacionLinearDe(vectorSol)) {
 				condicionClimatica = Constantes.SEQUIA;
-				System.out.println("hay combinacion lineal 1");
+				log.debug("hay combinacion lineal 1");
 			} else {
 				condicionClimatica = Constantes.OPTIMO;
-				System.out.println("hay combinacion lineal 2");
+				log.debug("hay combinacion lineal 2");
 			}
 
 			this.perimetroArea = 0;
